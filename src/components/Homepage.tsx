@@ -15,8 +15,9 @@ class Homepage extends Component<any, any> {
     console.log(333);
     this.getOriginImages()
       .then(data => {
-        this.setState({ imageList: data.findImagesByFilterType });
+        this.setState({ imageList: data.body });
         console.log(111);
+        console.dir(data);
       })
       // tslint:disable-next-line:no-console
       .catch(err => console.log(err));
@@ -26,13 +27,11 @@ class Homepage extends Component<any, any> {
     console.log(44);
     const response = await fetch("/images");
     console.dir(response);
-    const body = await response.json();
     if (response.status !== 200) {
-      throw Error(body.message);
+      throw Error(response.statusText);
     }
     console.log(5);
-    console.log(body);
-    return body;
+    return response;
   };
   public render() {
     return (
