@@ -14,10 +14,11 @@ class Homepage extends Component<any, any> {
   public componentDidMount = () => {
     console.log(333);
     this.getOriginImages()
+      .then(res => res.json())
       .then(data => {
-        this.setState({ imageList: data.body });
+        // this.setState({ imageList: data });
         console.log(111);
-        console.dir(data);
+        console.log(data);
       })
       // tslint:disable-next-line:no-console
       .catch(err => console.log(err));

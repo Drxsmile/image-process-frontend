@@ -3,6 +3,7 @@ import { gql } from "apollo-boost";
 import fetch from "cross-fetch";
 
 const client = new ApolloClient({
+  // "http://ec2-13-251-89-22.ap-southeast-1.compute.amazonaws.com:8080/graphql"
   link: new HttpLink({ uri: "http://localhost:8080/graphql", fetch }),
   cache: new InMemoryCache()
 });
@@ -80,6 +81,5 @@ export const getOrigin = async (req: any, res: any) => {
         console.log("xxx data returned:\n", res.data);
       });
   });
-  res.send(res.data);
-  // return p;
+  res.send(p);
 };
