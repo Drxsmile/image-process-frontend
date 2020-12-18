@@ -1,38 +1,53 @@
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import ImageCard from "./ImageCard";
 
-class Homepage extends Component<any, any> {
+class RelatedImage extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      imageList: []
+      imageList: [],
+      id: this.props.match.params.id,
+      filterName: this.props.location.state.filter
     };
   }
-
   public componentDidMount = () => {
-    this.getOriginImages()
+    console.log(987);
+    this.getRelatedImages()
       .then(res => res.json())
       .then(data => {
-        this.setState({ imageList: data.findImagesByFilterType });
-        console.log(111);
         console.log(data);
+        this.state.filterName === "origin"
+          ? this.setState({ imageList: data.getImagesByOriginImage })
+          : this.setState({ imageList: data.findImageByFilteredImage });
+        console.log(this.state.imageList);
+        console.log(134);
       })
-      // tslint:disable-next-line:no-console
       .catch(err => console.log(err));
   };
-  public getOriginImages = async () => {
-    const response = await fetch("/api/images");
+  public getRelatedImages = async () => {
+    const response = await fetch("/api/related", {
+      body: JSON.stringify({
+        id: this.state.id,
+        filterName: this.state.filterName
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    });
     if (response.status !== 200) {
       throw Error(response.statusText);
     }
+    console.log(234);
+    console.log(response);
     return response;
   };
   public render() {
     const { imageList } = this.state;
     return (
       <div>
+        <Button type="primary">Delete all related images</Button><br/>
         <Row gutter={16}>
           {imageList.map((element: any, index: number) => {
             return (
@@ -53,4 +68,4 @@ class Homepage extends Component<any, any> {
   }
 }
 
-export default withRouter(Homepage);
+export default RelatedImage;

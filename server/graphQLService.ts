@@ -8,78 +8,76 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-// const gqlQuery = (query: string, variables = {}) => {
-//   const p = new Promise(resolve => {
-//     client
-//       .query({
-//         query,
-//         variables
-//       })
-//       .then(res => {
-//         console.log("graphql response here", res);
-//         resolve(res.data);
-//         console.log("data returned:\n", res.data);
-//       });
-//   });
-//   return p;
-// };
-
-// const gqlMutate = (mutation, variables = {}) => {
-//   const p = new Promise(resolve => {
-//     client
-//       .mutate({
-//         mutation,
-//         variables
-//       })
-//       .then(res => {
-//         console.log("graphql response here");
-//         resolve(res.data);
-//         console.log("data returned:\n", res.data);
-//       });
-//   });
-//   return p;
-// };
-
 // export const saveImage = (req: any, res: any) => {};
-
-// export const getOriginImages = async (req, res) => {
-client
-  .query({
-    query: gql`
-      query GetImages {
-        findImagesByFilterType(filterName: "origin") {
-          s3Key
-        }
-      }
-    `
-    // variables: { filterName: "origin" }
-  })
-  .then(result => console.log(result.data));
-// };
-
-// export const saveImage = (req: any, res: any) => {};
+const q = gql`
+  query findImagesByFilterType($filterName: String!) {
+    findImagesByFilterType(filterName: $filterName) {
+      id
+      name
+      filterName
+      s3Key
+      time
+    }
+  }
+`;
 
 export const getOrigin = async (req: any, res: any) => {
-  // const variables = { filterName: "origin" };
-  const p = new Promise(resolve => {
-    client
-      .query({
-        query: gql`
-          query findImagesByFilterType {
-            findImagesByFilterType(filterName: "origin") {
-              id
-              name
-              filterName
-              s3Key
-              time
-            }
-          }
-        `
-      })
-      .then(res => {
-        resolve(res.data);
-        console.log("xxx data returned:\n", res.data);
-      });
-  });
-  res.send(p);
+  const vars = { filterName: "origin" };
+  client
+    .query({
+      query: q,
+      variables: vars
+    })
+    .then(result => {
+      res.send(result.data);
+    });
+};
+
+export const searchByType = async (req: any, res: any) => {
+  console.log(req.body.filterName);
+  const vars = { filterName: req.body.filterName.toString() };
+  client
+    .query({
+      query: q,
+      variables: vars
+    })
+    .then(result => {
+      res.send(result.data);
+    });
+};
+
+const origin = gql`
+  query findImageByFilteredImage($id: ID!) {
+    findImageByFilteredImage(id: $id) {
+      id
+      name
+      filterName
+      s3Key
+      time
+    }
+  }
+`;
+const filtered = gql`
+  query getImagesByOriginImage($id: ID!) {
+    getImagesByOriginImage(id: $id) {
+      id
+      name
+      filterName
+      s3Key
+      time
+    }
+  }
+`;
+export const related = async (req: any, res: any) => {
+  console.dir(req.body);
+  const vars = { id: req.body.id.toString() };
+  const rel = req.body.filterName === "origin" ? filtered : origin;
+  client
+    .query({
+      query: rel,
+      variables: vars
+    })
+    .then(result => {
+      res.send(result.data);
+    });
 };

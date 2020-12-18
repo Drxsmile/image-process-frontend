@@ -1,6 +1,7 @@
 import ErrorPage from "../components/ErrorPage";
 import Homepage from "../components/Homepage";
 import NotFound from "../components/NotFound";
+import RelatedImage from "../components/RelatedImage";
 import SaveImage from "../components/SaveImage";
 import SaveSuccess from "../components/SaveSuccess";
 import SearchImage from "../components/SearchImage";
@@ -35,5 +36,10 @@ export const appRoutes = [
     path: "/success",
     // tslint:disable-next-line:object-literal-sort-keys
     component: SaveSuccess
+  },
+  {
+    path: "/related/:id",
+    // tslint:disable-next-line:object-literal-sort-keys
+    component: RelatedImage
   }
 ];

@@ -25,7 +25,7 @@ class App extends Component<any, any> {
               );
             })}
             <Redirect to="/home" from="/" />
-            {/*<Redirect to="/404" />*/}
+            <Redirect to="/404" />
           </Switch>
         </Framework>
       </Router>
