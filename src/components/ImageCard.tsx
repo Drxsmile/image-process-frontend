@@ -8,14 +8,35 @@ class ImageCard extends Component<any, any> {
     super(props);
     this.state = { imageList: [] };
   }
-  public deleteImage = () => {
+  public deleteImage = async () => {
     console.log(2209);
+    const response = await fetch("/api/del", {
+      body: JSON.stringify({ id: this.props.id, name: this.props.name }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        this.props.history.push("/home");
+      })
+      .catch(err => console.log(err));
   };
   public showRelated = () => {
     const id = this.props.id;
+    const name = this.props.name;
     this.props.history.push({
-      pathname: "/related/" + id,
+      pathname: "/related/" + id + "/" + name,
       state: { filter: this.props.filterName }
+    });
+  };
+  public update = () => {
+    const id = this.props.id;
+    const name = this.props.name;
+    this.props.history.push({
+      pathname: "/update/" + id + "/" + name
     });
   };
   public render() {
@@ -33,7 +54,9 @@ class ImageCard extends Component<any, any> {
           />
         }
         actions={[
-          <Button type="primary">Update</Button>,
+          <Button type="primary" onClick={this.update}>
+            Update
+          </Button>,
           <Button type="primary" onClick={this.deleteImage}>
             Delete
           </Button>,

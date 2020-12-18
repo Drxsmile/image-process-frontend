@@ -8,7 +8,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-// export const saveImage = (req: any, res: any) => {};
 const q = gql`
   query findImagesByFilterType($filterName: String!) {
     findImagesByFilterType(filterName: $filterName) {
@@ -78,6 +77,118 @@ export const related = async (req: any, res: any) => {
       variables: vars
     })
     .then(result => {
+      console.log("result:", result.data);
+      res.send(result.data);
+    });
+};
+export const originImage = (req: any, res: any) => {
+  console.dir(req.body);
+  const vars = { id: req.body.id.toString(), name: req.body.name.toString() };
+  const o = gql`
+    query getImageByPrimaryKey($id: ID!, $name: String!) {
+      getImageByPrimaryKey(id: $id, name: $name) {
+        id
+        name
+        filterName
+        s3Key
+        time
+      }
+    }
+  `;
+  client
+    .query({
+      query: o,
+      variables: vars
+    })
+    .then(result => {
+      console.log("result:", result.data);
+      res.send(result.data);
+    });
+};
+export const deleteAll = (req: any, res: any) => {
+  const del = gql`
+    mutation deleteImages($id: ID!) {
+      deleteImages(id: $id)
+    }
+  `;
+  const vars = { id: req.body.id.toString() };
+  client
+    .mutate({
+      mutation: del,
+      variables: vars
+    })
+    .then(result => {
+      console.log("result:", result.data);
+      res.send(result.data);
+    });
+};
+export const deleteOne = (req: any, res: any) => {
+  const del = gql`
+    mutation deleteImage($id: ID!, $name: String!) {
+      deleteImage(id: $id, name: $name)
+    }
+  `;
+  const vars = { id: req.body.id.toString(), name: req.body.name.toString() };
+  client
+    .mutate({
+      mutation: del,
+      variables: vars
+    })
+    .then(result => {
+      console.log("result:", result.data);
+      res.send(result.data);
+    });
+};
+export const saveImage = (req: any, res: any) => {
+  const vars = { name: req.body.name.toString(), image: null };
+  const save = gql`
+    mutation saveOriginImage($name: String!, $image: Upload!) {
+      saveOriginImage(name: $name, image: $image) {
+        id
+        name
+        filterName
+        s3Key
+        time
+      }
+    }
+  `;
+  client
+    .mutate({
+      mutation: save,
+      variables: vars
+    })
+    .then(result => {
+      console.log("result:", result.data);
+      res.send(result.data);
+    });
+};
+export const updateImage = (req: any, res: any) => {
+  const vars = {
+    input: {
+      id: req.body.id.toString(),
+      name: req.body.name.toString(),
+      filterName: req.body.filterName.toString(),
+      newName: req.body.newName.toString()
+    }
+  };
+  const update = gql`
+    mutation updateImage($input: UpdateImageInput!) {
+      updateImage(input: $input) {
+        id
+        name
+        filterName
+        s3Key
+        time
+      }
+    }
+  `;
+  client
+    .mutate({
+      mutation: update,
+      variables: vars
+    })
+    .then(result => {
+      console.log("result:", result.data);
       res.send(result.data);
     });
 };

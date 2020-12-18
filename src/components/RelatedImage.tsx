@@ -1,5 +1,6 @@
-import { Button, Col, Row } from "antd";
+import { Button, Col, Divider, Row } from "antd";
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import ImageCard from "./ImageCard";
 
 class RelatedImage extends Component<any, any> {
@@ -17,9 +18,13 @@ class RelatedImage extends Component<any, any> {
       .then(res => res.json())
       .then(data => {
         console.log(data);
-        this.state.filterName === "origin"
-          ? this.setState({ imageList: data.getImagesByOriginImage })
-          : this.setState({ imageList: data.findImageByFilteredImage });
+        if (this.state.filterName === "origin") {
+          this.setState({ imageList: data.getImagesByOriginImage });
+        } else {
+          this.setState({
+            imageList: [data.findImageByFilteredImage]
+          });
+        }
         console.log(this.state.imageList);
         console.log(134);
       })
@@ -43,11 +48,29 @@ class RelatedImage extends Component<any, any> {
     console.log(response);
     return response;
   };
+  public deleteAll = async () => {
+    const response = await fetch("/api/delete", {
+      body: JSON.stringify({ id: this.state.id }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        this.props.history.push("/home");
+      })
+      .catch(err => console.log(err));
+  };
   public render() {
     const { imageList } = this.state;
     return (
       <div>
-        <Button type="primary">Delete all related images</Button><br/>
+        <Button type="primary" onClick={this.deleteAll}>
+          Delete all related images
+        </Button>
+        <Divider />
         <Row gutter={16}>
           {imageList.map((element: any, index: number) => {
             return (
@@ -68,4 +91,4 @@ class RelatedImage extends Component<any, any> {
   }
 }
 
-export default RelatedImage;
+export default withRouter(RelatedImage);
