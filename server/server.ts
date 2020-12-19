@@ -11,9 +11,12 @@ import {
   updateImage
 } from "./graphQLService";
 
+import formidableMiddleware from "express-formidable";
+
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(formidableMiddleware());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

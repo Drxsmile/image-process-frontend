@@ -1,10 +1,13 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { gql } from "apollo-boost";
+// import { ApolloLink, from } from "apollo-link";
+import { createUploadLink } from "apollo-upload-client";
 import fetch from "cross-fetch";
 
 const client = new ApolloClient({
   // "http://ec2-13-251-89-22.ap-southeast-1.compute.amazonaws.com:8080/graphql"
-  link: new HttpLink({ uri: "http://localhost:8080/graphql", fetch }),
+  // link: new HttpLink({ uri: "http://localhost:8080/graphql", fetch }),
+  link: createUploadLink({ uri: "http://localhost:8080/graphql", fetch }),
   cache: new InMemoryCache()
 });
 
@@ -139,8 +142,9 @@ export const deleteOne = (req: any, res: any) => {
       res.send(result.data);
     });
 };
-export const saveImage = (req: any, res: any) => {
-  const vars = { name: req.body.name.toString(), image: null };
+export const saveImage = async (req: any, res: any) => {
+  // console.dir(req.files.image);
+  const vars = { name: req.fields.name.toString(), image: req.files.image };
   const save = gql`
     mutation saveOriginImage($name: String!, $image: Upload!) {
       saveOriginImage(name: $name, image: $image) {
@@ -152,7 +156,7 @@ export const saveImage = (req: any, res: any) => {
       }
     }
   `;
-  client
+  await client
     .mutate({
       mutation: save,
       variables: vars
@@ -160,7 +164,8 @@ export const saveImage = (req: any, res: any) => {
     .then(result => {
       console.log("result:", result.data);
       res.send(result.data);
-    });
+    })
+    .catch(err => console.log(err));
 };
 export const updateImage = (req: any, res: any) => {
   const vars = {

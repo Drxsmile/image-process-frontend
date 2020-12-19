@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, Form, Input, Row, Select} from "antd";
+import { Button, Card, Col, Divider, Form, Input, Row, Select } from "antd";
 import React, { Component } from "react";
 import ImageCard from "./ImageCard";
 
@@ -19,7 +19,8 @@ export default class UpdateImage extends Component<any, any> {
       filterName: "",
       newName: "",
       origin: {},
-      filtered: {}
+      filtered: {},
+      isShow: false
     };
   }
   public newName = (e: any) => {
@@ -42,10 +43,10 @@ export default class UpdateImage extends Component<any, any> {
       method: "POST"
     })
       .then(res => res.json())
-      .then(data => {
+      .then(async data => {
         console.log(data);
         this.setState({ filtered: data.updateImage });
-        this.getOrigin();
+        await this.getOrigin();
       })
       .catch(err => console.log(err));
   };
@@ -64,6 +65,7 @@ export default class UpdateImage extends Component<any, any> {
       .then(data => {
         console.log(data);
         this.setState({ origin: data.getImageByPrimaryKey });
+        this.setState({ isShow: true });
       })
       .catch(err => console.log(err));
   };
@@ -110,27 +112,33 @@ export default class UpdateImage extends Component<any, any> {
             </Form.Item>
           </Form>
         </Card>
-        <Divider />
-        <Row gutter={16}>
-          <Col span={8}>
-            <ImageCard
-              name={this.state.origin.name}
-              time={this.state.origin.time}
-              id={this.state.origin.id}
-              s3Key={this.state.origin.s3Key}
-              filterName={this.state.origin.filterName}
-            />
-          </Col>
-          <Col span={8}>
-            <ImageCard
-              name={this.state.filtered.name}
-              time={this.state.filtered.time}
-              id={this.state.filtered.id}
-              s3Key={this.state.filtered.s3Key}
-              filterName={this.state.filtered.filterName}
-            />
-          </Col>
-        </Row>
+        {this.state.isShow ? (
+          <div>
+            <Divider />
+            <Row gutter={16}>
+              <Col span={8}>
+                <ImageCard
+                  name={this.state.origin.name}
+                  time={this.state.origin.time}
+                  id={this.state.origin.id}
+                  s3Key={this.state.origin.s3Key}
+                  filterName={this.state.origin.filterName}
+                />
+              </Col>
+              <Col span={8}>
+                <ImageCard
+                  name={this.state.filtered.name}
+                  time={this.state.filtered.time}
+                  id={this.state.filtered.id}
+                  s3Key={this.state.filtered.s3Key}
+                  filterName={this.state.filtered.filterName}
+                />
+              </Col>
+            </Row>
+          </div>
+        ) : (
+          <div>waiting for update...</div>
+        )}
       </div>
     );
   }

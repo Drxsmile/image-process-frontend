@@ -23,5 +23,6 @@
   "exclude": [
     // Now exclude what we do not want in our project
 //    "server/**/*"
+    "node_modules"
   ]
 }
