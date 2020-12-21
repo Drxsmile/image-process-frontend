@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { gql } from "apollo-boost";
 // import { ApolloLink, from } from "apollo-link";
 import { createUploadLink } from "apollo-upload-client";
@@ -132,6 +132,7 @@ export const deleteOne = (req: any, res: any) => {
     }
   `;
   const vars = { id: req.body.id.toString(), name: req.body.name.toString() };
+  console.dir(vars);
   client
     .mutate({
       mutation: del,
@@ -142,31 +143,7 @@ export const deleteOne = (req: any, res: any) => {
       res.send(result.data);
     });
 };
-export const saveImage = async (req: any, res: any) => {
-  // console.dir(req.files.image);
-  const vars = { name: req.fields.name.toString(), image: req.files.image };
-  const save = gql`
-    mutation saveOriginImage($name: String!, $image: Upload!) {
-      saveOriginImage(name: $name, image: $image) {
-        id
-        name
-        filterName
-        s3Key
-        time
-      }
-    }
-  `;
-  await client
-    .mutate({
-      mutation: save,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    })
-    .catch(err => console.log(err));
-};
+
 export const updateImage = (req: any, res: any) => {
   const vars = {
     input: {

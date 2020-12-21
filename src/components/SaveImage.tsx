@@ -9,7 +9,6 @@ import {
   Row,
   Upload
 } from "antd";
-// import { FormInstance } from "antd/lib/form";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import ImageCard from "./ImageCard";
@@ -30,7 +29,6 @@ const normFile = (e: any) => {
 };
 
 class SaveImage extends Component<any, any> {
-  // public formRef = React.createRef<FormInstance>();
   constructor(props: any) {
     super(props);
     this.state = { name: "", isShow: false, origin: {}, image: {} };
@@ -68,9 +66,6 @@ class SaveImage extends Component<any, any> {
     console.log(formData.get("image"));
     await fetch("/api/save", {
       body: formData,
-      // headers: {
-      //   "Content-Type": "multipart/form-data"
-      // },
       method: "POST"
     })
       .then(response => response.json())

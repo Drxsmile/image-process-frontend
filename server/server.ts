@@ -6,21 +6,25 @@ import {
   getOrigin,
   originImage,
   related,
-  saveImage,
   searchByType,
   updateImage
 } from "./graphQLService";
 
-import formidableMiddleware from "express-formidable";
+// import formidableMiddleware from "express-formidable";
+import multer from "multer";
+import { saveImage } from "./upload";
+
+const upload = multer({ dest: "uploads/" });
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(formidableMiddleware());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(formidableMiddleware());
 
-app.post("/api/save", saveImage);
+app.post("/api/save", upload.single("image"), saveImage);
+// app.post("/api/save", saveImage);
 app.get("/api/images", getOrigin);
 app.post("/api/filterType", searchByType);
 app.post("/api/related", related);

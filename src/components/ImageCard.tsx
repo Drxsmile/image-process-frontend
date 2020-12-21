@@ -20,7 +20,7 @@ class ImageCard extends Component<any, any> {
       .then(res => res.json())
       .then(data => {
         console.log(data);
-        this.props.history.push("/home");
+        this.props.history.push("/");
       })
       .catch(err => console.log(err));
   };
