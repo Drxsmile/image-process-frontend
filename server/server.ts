@@ -31,7 +31,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/api/save", upload.single("image"), saveImage);
-// app.post("/api/save", saveImage);
 app.get("/api/images", getOrigin);
 app.post("/api/filterType", searchByType);
 app.post("/api/related", related);

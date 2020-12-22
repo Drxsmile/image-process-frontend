@@ -1,4 +1,4 @@
-import { Button, Card, Result } from "antd";
+import { Button, Card } from "antd";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
@@ -16,7 +16,8 @@ class ImageCard extends Component<any, any> {
       const id = this.props.id;
       const name = this.props.name;
       this.props.history.push({
-        pathname: "/error/" + id + "/" + name
+        pathname: "/error/" + id + "/" + name,
+        state: { filter: this.props.filterName }
       });
     } else {
       const response = await fetch("/api/del", {
