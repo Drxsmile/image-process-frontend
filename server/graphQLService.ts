@@ -1,16 +1,19 @@
 import fetch from "cross-fetch";
 
 export const myGraphql = (query: string, variables: {}, res: any) => {
-  fetch("http://localhost:8080/graphql", {
-    body: JSON.stringify({
-      query,
-      variables
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    },
-    method: "POST"
-  })
+  fetch(
+    "http://ec2-13-251-89-22.ap-southeast-1.compute.amazonaws.com:8080/graphql",
+    {
+      body: JSON.stringify({
+        query,
+        variables
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    }
+  )
     .then(response => response.json())
     .then(result => {
       console.log("result:", result.data);

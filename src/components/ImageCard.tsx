@@ -9,31 +9,28 @@ class ImageCard extends Component<any, any> {
     this.state = { imageList: [] };
   }
   public deleteImage = async () => {
-    console.log(2209);
-    console.log(this.props.filterName === "origin");
-    if (this.props.fileterName === "origin") {
-      console.log(4443);
-      const id = this.props.id;
-      const name = this.props.name;
-      this.props.history.push({
-        pathname: "/error/" + id + "/" + name,
-        state: { filter: this.props.filterName }
-      });
-    } else {
-      const response = await fetch("/api/del", {
-        body: JSON.stringify({ id: this.props.id, name: this.props.name }),
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST"
+    console.log("deleteone");
+    const response = await fetch("/api/del", {
+      body: JSON.stringify({ id: this.props.id, name: this.props.name }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        this.props.history.push("/");
       })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
-          this.props.history.push("/");
-        })
-        .catch(err => console.log(err));
-    }
+      .catch(err => console.log(err));
+  };
+  public handleDelete = () => {
+    console.log(4567);
+    const id = this.props.id;
+    const name = this.props.name;
+    this.props.history.push({
+      pathname: "/error/" + id + "/" + name
+    });
   };
   public showRelated = () => {
     const id = this.props.id;
@@ -68,7 +65,14 @@ class ImageCard extends Component<any, any> {
           <Button type="primary" onClick={this.update}>
             Update
           </Button>,
-          <Button type="primary" onClick={this.deleteImage}>
+          <Button
+            type="primary"
+            onClick={
+              this.props.filterName === "origin"
+                ? this.handleDelete
+                : this.deleteImage
+            }
+          >
             Delete
           </Button>,
           <Button type="primary" onClick={this.showRelated}>

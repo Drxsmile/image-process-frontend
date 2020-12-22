@@ -11,7 +11,7 @@ class ErrorPage extends Component<any, any> {
     const name = this.props.match.params.name;
     this.props.history.push({
       pathname: "/related/" + id + "/" + name,
-      state: { filter: this.props.location.state.filterName }
+      state: { filter: "origin" }
     });
   };
   public render() {
