@@ -28,7 +28,7 @@ export const appRoutes = [
     component: SearchImage
   },
   {
-    path: "/error",
+    path: "/error/:id/:name",
     // tslint:disable-next-line:object-literal-sort-keys
     component: ErrorPage
   },

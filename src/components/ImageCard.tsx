@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row } from "antd";
+import { Button, Card, Result } from "antd";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
@@ -10,19 +10,29 @@ class ImageCard extends Component<any, any> {
   }
   public deleteImage = async () => {
     console.log(2209);
-    const response = await fetch("/api/del", {
-      body: JSON.stringify({ id: this.props.id, name: this.props.name }),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: "POST"
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        this.props.history.push("/");
+    console.log(this.props.filterName === "origin");
+    if (this.props.fileterName === "origin") {
+      console.log(4443);
+      const id = this.props.id;
+      const name = this.props.name;
+      this.props.history.push({
+        pathname: "/error/" + id + "/" + name
+      });
+    } else {
+      const response = await fetch("/api/del", {
+        body: JSON.stringify({ id: this.props.id, name: this.props.name }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "POST"
       })
-      .catch(err => console.log(err));
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          this.props.history.push("/");
+        })
+        .catch(err => console.log(err));
+    }
   };
   public showRelated = () => {
     const id = this.props.id;

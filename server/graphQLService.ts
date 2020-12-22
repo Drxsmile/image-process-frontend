@@ -1,147 +1,68 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { gql } from "apollo-boost";
-// import { ApolloLink, from } from "apollo-link";
-import { createUploadLink } from "apollo-upload-client";
 import fetch from "cross-fetch";
 
-const client = new ApolloClient({
-  // "http://ec2-13-251-89-22.ap-southeast-1.compute.amazonaws.com:8080/graphql"
-  // link: new HttpLink({ uri: "http://localhost:8080/graphql", fetch }),
-  link: createUploadLink({ uri: "http://localhost:8080/graphql", fetch }),
-  cache: new InMemoryCache()
-});
+export const myGraphql = (query: string, variables: {}, res: any) => {
+  fetch("http://localhost:8080/graphql", {
+    body: JSON.stringify({
+      query,
+      variables
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    method: "POST"
+  })
+    .then(response => response.json())
+    .then(result => {
+      console.log("result:", result.data);
 
-const q = gql`
-  query findImagesByFilterType($filterName: String!) {
-    findImagesByFilterType(filterName: $filterName) {
-      id
-      name
-      filterName
-      s3Key
-      time
-    }
-  }
-`;
+      res.send(result.data);
+    })
+    .catch(error => console.log("error", error));
+};
+
+const q =
+  "query ($filterName: String!) { findImagesByFilterType(filterName: $filterName) {id name filterName s3Key time} }";
 
 export const getOrigin = async (req: any, res: any) => {
   const vars = { filterName: "origin" };
-  client
-    .query({
-      query: q,
-      variables: vars
-    })
-    .then(result => {
-      res.send(result.data);
-    });
+  myGraphql(q, vars, res);
 };
 
 export const searchByType = async (req: any, res: any) => {
   console.log(req.body.filterName);
   const vars = { filterName: req.body.filterName.toString() };
-  client
-    .query({
-      query: q,
-      variables: vars
-    })
-    .then(result => {
-      res.send(result.data);
-    });
+  myGraphql(q, vars, res);
 };
 
-const origin = gql`
-  query findImageByFilteredImage($id: ID!) {
-    findImageByFilteredImage(id: $id) {
-      id
-      name
-      filterName
-      s3Key
-      time
-    }
-  }
-`;
-const filtered = gql`
-  query getImagesByOriginImage($id: ID!) {
-    getImagesByOriginImage(id: $id) {
-      id
-      name
-      filterName
-      s3Key
-      time
-    }
-  }
-`;
+const origin =
+  "query ($id: ID!) { findImageByFilteredImage(id: $id) {id name filterName s3Key time} }";
+const filtered =
+  "query ($id: ID!) { getImagesByOriginImage(id: $id) {id name filterName s3Key time} }";
 export const related = async (req: any, res: any) => {
   console.dir(req.body);
   const vars = { id: req.body.id.toString() };
   const rel = req.body.filterName === "origin" ? filtered : origin;
-  client
-    .query({
-      query: rel,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    });
+  await myGraphql(rel, vars, res);
 };
+
 export const originImage = (req: any, res: any) => {
   console.dir(req.body);
   const vars = { id: req.body.id.toString(), name: req.body.name.toString() };
-  const o = gql`
-    query getImageByPrimaryKey($id: ID!, $name: String!) {
-      getImageByPrimaryKey(id: $id, name: $name) {
-        id
-        name
-        filterName
-        s3Key
-        time
-      }
-    }
-  `;
-  client
-    .query({
-      query: o,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    });
+  const o =
+    "query ($id: ID!, $name: String!) { getImageByPrimaryKey(id: $id, name: $name) {id name filterName s3Key time} }";
+  myGraphql(o, vars, res);
 };
+
 export const deleteAll = (req: any, res: any) => {
-  const del = gql`
-    mutation deleteImages($id: ID!) {
-      deleteImages(id: $id)
-    }
-  `;
+  const del = "mutation ($id: ID!) {deleteImages(id: $id)}";
   const vars = { id: req.body.id.toString() };
-  client
-    .mutate({
-      mutation: del,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    });
+  myGraphql(del, vars, res);
 };
 export const deleteOne = (req: any, res: any) => {
-  const del = gql`
-    mutation deleteImage($id: ID!, $name: String!) {
-      deleteImage(id: $id, name: $name)
-    }
-  `;
+  const del =
+    "mutation ($id: ID!, $name: String!) {deleteImage(id: $id, name: $name)}";
   const vars = { id: req.body.id.toString(), name: req.body.name.toString() };
-  console.dir(vars);
-  client
-    .mutate({
-      mutation: del,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    });
+  myGraphql(del, vars, res);
 };
 
 export const updateImage = (req: any, res: any) => {
@@ -153,24 +74,7 @@ export const updateImage = (req: any, res: any) => {
       newName: req.body.newName.toString()
     }
   };
-  const update = gql`
-    mutation updateImage($input: UpdateImageInput!) {
-      updateImage(input: $input) {
-        id
-        name
-        filterName
-        s3Key
-        time
-      }
-    }
-  `;
-  client
-    .mutate({
-      mutation: update,
-      variables: vars
-    })
-    .then(result => {
-      console.log("result:", result.data);
-      res.send(result.data);
-    });
+  const update =
+    "mutation ($input: UpdateImageInput!) { updateImage(input: $input) {id name filterName s3Key time} }";
+  myGraphql(update, vars, res);
 };
