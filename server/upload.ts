@@ -10,7 +10,7 @@ export const saveImage = async (req: any, res: any) => {
   formData.append("name", req.body.name.toString());
   formData.append("operations", "{\"query\": \"mutation($name: String!, $image:Upload!){saveOriginImage(name: $name, image:$image){s3Key time id name filterName}}\", \"variables\":{}}");
   await fetch(
-    "http://ec2-13-251-89-22.ap-southeast-1.compute.amazonaws.com:8080/graphql",
+    "http://ec2-13-212-15-63.ap-southeast-1.compute.amazonaws.com:8080/graphql",
     {
       method: "POST",
       body: formData.stream,

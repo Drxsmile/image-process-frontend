@@ -1,14 +1,11 @@
-FROM node:alpine AS ui-build
-RUN npm config set registry " https://registry.npm.taobao.org "
-WORKDIR /usr/src/app
-COPY src/ ./src/
-RUN cd src && npm install && npm run build
-
-FROM node:alpine AS server-build
+FROM node:alpine
+RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
 WORKDIR /root/
-COPY --from=ui-build /usr/src/app/src/build ./src/build
+COPY src/ ./src/
+COPY public/ ./public/
 COPY server/ ./server/
 COPY *.json ./
 COPY *.js ./
-RUN npm install
+ENV DANGEROUSLY_DISABLE_HOST_CHECK true
+RUN cnpm install && npm run build
 CMD ["npm", "start"]
